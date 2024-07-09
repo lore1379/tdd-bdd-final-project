@@ -30,6 +30,7 @@ from decimal import Decimal
 from service.models import Product, Category, db
 from service import app
 from tests.factories import ProductFactory
+from service.models import DataValidationError
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -145,6 +146,12 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, original_id)
         self.assertEqual(products[0].description, "testing")
+
+    def test_update_a_non_existent_product(self):
+        """ It should not Update a product thats not found """
+        product = ProductFactory()
+        product.id = None
+        self.assertRaises(DataValidationError, product.update)
 
     def test_delete_a_product(self):
         """ It should Delete a product """
